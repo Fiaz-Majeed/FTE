@@ -6,23 +6,24 @@ Welcome to your FTE (Foundation Tier) workflow hub. This dashboard provides quic
 
 ## Quick Navigation
 
-| Folder | Description | Link |
-|--------|-------------|------|
-| Inbox | New items awaiting processing | [[Inbox]] |
+| Folder       | Description                    | Link             |
+| ------------ | ------------------------------ | ---------------- |
+| Inbox        | New items awaiting processing  | [[Inbox]]        |
 | Needs Action | Items requiring your attention | [[Needs_Action]] |
-| Done | Completed items | [[Done]] |
+| Done         | Completed items                | [[Done]]         |
 
 ---
 
 ## Status Overview
 
 ### Pending Items
-- **Inbox:** 0 items
+- **Inbox:** 4 items
 - **Needs Action:** 0 items
 - **Completed Today:** 0 items
 
 ### Recent Activity
-_No recent activity_
+- [2026-01-26] 4 emails captured from Gmail
+- [2026-01-26] Gmail watcher activated
 
 ---
 
@@ -56,4 +57,4 @@ arrive      categorize   completed
 
 ---
 
-_Last updated: {{date}}_
+_Last updated: 2026-01-26_

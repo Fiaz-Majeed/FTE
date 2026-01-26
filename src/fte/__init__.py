@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .vault_manager import VaultManager
 from .watcher import VaultWatcher, watch
+from .gmail_watcher import GmailWatcher, watch as gmail_watch
 
 
 def cmd_watch() -> None:
@@ -12,6 +13,13 @@ def cmd_watch() -> None:
     print("FTE Vault Watcher")
     print("=" * 40)
     watch()
+
+
+def cmd_gmail() -> None:
+    """Start the Gmail watcher."""
+    print("FTE Gmail Watcher")
+    print("=" * 40)
+    gmail_watch()
 
 
 def cmd_status() -> None:
@@ -58,6 +66,7 @@ def show_help() -> None:
     print("\nUsage: fte <command>\n")
     print("Commands:")
     print("  watch    Start file system watcher on Inbox folder")
+    print("  gmail    Start Gmail watcher for new emails")
     print("  status   Show current vault status")
     print("  process  List and process Inbox items")
     print("  help     Show this help message")
@@ -78,6 +87,7 @@ def main() -> None:
 
     commands = {
         "watch": cmd_watch,
+        "gmail": cmd_gmail,
         "status": cmd_status,
         "process": cmd_process,
         "help": show_help,
@@ -93,4 +103,4 @@ def main() -> None:
         sys.exit(1)
 
 
-__all__ = ["VaultManager", "VaultWatcher", "watch", "main"]
+__all__ = ["VaultManager", "VaultWatcher", "GmailWatcher", "watch", "gmail_watch", "main"]

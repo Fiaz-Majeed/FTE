@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# OAuth credentials (sensitive)
+credentials.json
+token.pickle
+
+# Misc
+nul

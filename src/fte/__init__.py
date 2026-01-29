@@ -6,6 +6,9 @@ from pathlib import Path
 from .vault_manager import VaultManager
 from .watcher import VaultWatcher, watch
 from .gmail_watcher import GmailWatcher, watch as gmail_watch
+from .watchers.whatsapp_watcher import WhatsAppWatcher, watch as whatsapp_watch
+from .watchers.linkedin_watcher import LinkedInWatcher, watch as linkedin_watch
+from .watchers.enhanced_file_watcher import EnhancedVaultWatcher, watch as enhanced_watch
 
 
 def cmd_watch() -> None:
@@ -20,6 +23,41 @@ def cmd_gmail() -> None:
     print("FTE Gmail Watcher")
     print("=" * 40)
     gmail_watch()
+
+
+def cmd_whatsapp() -> None:
+    """Start the WhatsApp watcher."""
+    print("FTE WhatsApp Watcher")
+    print("=" * 40)
+    try:
+        from .watchers.whatsapp_watcher import watch as whatsapp_watch
+        whatsapp_watch()
+    except ImportError as e:
+        print(f"WhatsApp watcher not available: {e}")
+        print("Install Twilio: pip install twilio")
+
+
+def cmd_linkedin() -> None:
+    """Start the LinkedIn watcher."""
+    print("FTE LinkedIn Watcher")
+    print("=" * 40)
+    try:
+        from .watchers.linkedin_watcher import watch as linkedin_watch
+        linkedin_watch()
+    except ImportError as e:
+        print(f"LinkedIn watcher not available: {e}")
+        print("Install linkedin-api: pip install linkedin-api")
+
+
+def cmd_enhanced_watch() -> None:
+    """Start the enhanced file system watcher."""
+    print("FTE Enhanced File Watcher")
+    print("=" * 40)
+    try:
+        from .watchers.enhanced_file_watcher import watch as enhanced_watch
+        enhanced_watch()
+    except ImportError as e:
+        print(f"Enhanced watcher not available: {e}")
 
 
 def cmd_status() -> None:
@@ -65,16 +103,23 @@ def show_help() -> None:
     print("=" * 40)
     print("\nUsage: fte <command>\n")
     print("Commands:")
-    print("  watch    Start file system watcher on Inbox folder")
-    print("  gmail    Start Gmail watcher for new emails")
-    print("  status   Show current vault status")
-    print("  process  List and process Inbox items")
-    print("  help     Show this help message")
+    print("  watch          Start file system watcher on Inbox folder")
+    print("  gmail          Start Gmail watcher for new emails")
+    print("  whatsapp       Start WhatsApp watcher for new messages")
+    print("  linkedin       Start LinkedIn watcher for notifications/messages")
+    print("  enhanced-watch Start enhanced file system watcher")
+    print("  status         Show current vault status")
+    print("  process        List and process Inbox items")
+    print("  help           Show this help message")
     print("\nAgent Skills (use with Claude Code):")
     print("  /inbox-processor   Analyze and categorize inbox items")
     print("  /task-manager      Manage task status and movement")
     print("  /dashboard-updater Refresh Dashboard.md statistics")
     print("  /note-creator      Create structured notes")
+    print("  /plan-reasoning    Process Plan.md files with Claude reasoning")
+    print("  /linkedin-posting  Automate LinkedIn posts about business")
+    print("  /approval-workflow Handle human-in-the-loop approval for actions")
+    print("  /scheduler-skills  Schedule and manage recurring tasks")
 
 
 def main() -> None:
@@ -88,6 +133,9 @@ def main() -> None:
     commands = {
         "watch": cmd_watch,
         "gmail": cmd_gmail,
+        "whatsapp": cmd_whatsapp,
+        "linkedin": cmd_linkedin,
+        "enhanced-watch": cmd_enhanced_watch,
         "status": cmd_status,
         "process": cmd_process,
         "help": show_help,

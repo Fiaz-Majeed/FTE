@@ -1,7 +1,14 @@
 """Inbox Processor Skill - Analyze and categorize inbox items."""
 
 from pathlib import Path
-from ..vault_manager import VaultManager
+import sys
+
+# Add the src directory to the Python path
+src_path = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(src_path))
+
+from fte.vault_manager import VaultManager
+from fte.skills.email_response_generator import process_inbox_for_responses
 
 
 def process_inbox(vault_path: str | Path | None = None) -> dict:
@@ -47,6 +54,35 @@ def process_inbox(vault_path: str | Path | None = None) -> dict:
 
     results["message"] = f"Processed {len(items)} items"
     return results
+
+
+def process_inbox_with_ai_responses(vault_path: str | Path | None = None) -> dict:
+    """Process all items in the Inbox folder and generate AI responses for them.
+
+    Args:
+        vault_path: Optional path to vault directory
+
+    Returns:
+        Dictionary with processing results including AI response generation
+    """
+    # First, process the inbox normally
+    normal_results = process_inbox(vault_path)
+
+    # Then generate AI responses for all emails
+    ai_results = process_inbox_for_responses(vault_path)
+
+    # Combine results
+    combined_results = {
+        "normal_processing": normal_results,
+        "ai_response_generation": ai_results,
+        "summary": {
+            "total_inbox_items": normal_results["total_items"],
+            "ai_responses_generated": ai_results["successful"],
+            "ai_responses_failed": ai_results["failed"]
+        }
+    }
+
+    return combined_results
 
 
 def categorize_item(name: str, content: str) -> str:

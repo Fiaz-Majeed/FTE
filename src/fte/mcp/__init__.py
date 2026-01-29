@@ -1,0 +1,1 @@
+"""MCP server module for FTE Silver Tier."""

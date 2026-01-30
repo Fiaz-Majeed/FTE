@@ -1,0 +1,1 @@
+"""Watchers module for FTE Silver Tier."""

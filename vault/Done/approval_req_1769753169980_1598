@@ -1,0 +1,20 @@
+{
+  "request_id": "req_1769753169980_1598",
+  "action_type": "test_action",
+  "requester": "test_system",
+  "required_level": "basic",
+  "status": "approved",
+  "created_at": "2026-01-30T11:06:09.980139",
+  "approved_by": [
+    "manager"
+  ],
+  "rejected_by": [],
+  "reason": "Approved for testing",
+  "approvers": [
+    "manager"
+  ],
+  "action_details": {
+    "content": "Test content for approval",
+    "purpose": "business"
+  }
+}

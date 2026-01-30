@@ -214,3 +214,125 @@ class VaultManager:
                 }
             )
         return items
+
+    def save_content(self, *args, **kwargs) -> Path:
+        """Save content to a markdown file, supporting flexible parameter ordering.
+
+        Args:
+            Can accept either:
+            - content (str), filename (str, optional), folder (str, optional)
+            - filename (str), content (str), folder (str, optional)
+
+        Keyword Args:
+            folder: Target folder (default: Inbox)
+            category: Category to map to specific folder if provided
+
+        Returns:
+            Path to the saved file
+        """
+        # Handle flexible parameter order based on types
+        content = None
+        filename = None
+        folder = kwargs.get('folder', 'Inbox')
+
+        if 'category' in kwargs:
+            folder = self._map_category_to_folder(kwargs['category'])
+
+        # Check if first arg is content (likely longer string) or filename (likely shorter)
+        if args:
+            first_arg = args[0]
+            # If first arg contains common dictionary/json markers or is short, it's likely a filename
+            if isinstance(first_arg, str) and (len(first_arg) < 100 or first_arg.startswith(('req_', 'delivery_log_', 'nurturing_log_', 'approval_', 'skill_config'))):
+                # First arg is filename
+                filename = first_arg
+                if len(args) > 1:
+                    content = args[1]
+                if len(args) > 2:
+                    folder = args[2]
+            else:
+                # First arg is content
+                content = first_arg
+                if len(args) > 1:
+                    filename = args[1]
+                if len(args) > 2:
+                    folder = args[2]
+
+        # Generate filename if not provided
+        if filename is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]  # Include milliseconds to avoid conflicts
+            filename = f"content_{timestamp}.md"
+
+        # Ensure the folder exists
+        target_folder = self.vault_path / folder
+        target_folder.mkdir(parents=True, exist_ok=True)
+
+        # Create full file path
+        file_path = target_folder / filename
+
+        # Write content to file
+        file_path.write_text(content or "", encoding="utf-8")
+        return file_path
+
+    def get_recent_content(self, days: int = 30) -> list[dict]:
+        """Get recent content from all vault folders within specified days.
+
+        Args:
+            days: Number of days to look back (default: 30)
+
+        Returns:
+            List of content items with metadata
+        """
+        from datetime import timedelta
+        cutoff_date = datetime.now() - timedelta(days=days)
+        all_content = []
+
+        # Check all vault folders
+        folders = ["Inbox", "Needs_Action", "Done"]
+
+        for folder_name in folders:
+            folder_path = self.vault_path / folder_name
+            if folder_path.exists():
+                for file_path in folder_path.iterdir():
+                    if file_path.suffix == ".md":
+                        # Check file modification time
+                        mod_time = datetime.fromtimestamp(file_path.stat().st_mtime)
+                        if mod_time >= cutoff_date:
+                            try:
+                                content = file_path.read_text(encoding="utf-8")
+                                all_content.append({
+                                    "title": file_path.stem,
+                                    "content": content,
+                                    "path": str(file_path),
+                                    "modified": mod_time,
+                                    "folder": folder_name
+                                })
+                            except Exception:
+                                # Skip files that can't be read
+                                continue
+
+        # Sort by modification time (newest first)
+        all_content.sort(key=lambda x: x["modified"], reverse=True)
+        return all_content
+
+    def _map_category_to_folder(self, category: str) -> str:
+        """Map category to appropriate vault folder.
+
+        Args:
+            category: Content category
+
+        Returns:
+            Folder name corresponding to category
+        """
+        category_folder_map = {
+            "customer_outreach": "Needs_Action",
+            "sales_pipeline": "Needs_Action",
+            "approvals": "Done",
+            "scheduled_items": "Done",
+            "execution_results": "Done",
+            "config": "Done",
+            "linkedin_posts": "Done",
+            "content_strategy": "Done",
+            "business_intelligence": "Done"
+        }
+
+        return category_folder_map.get(category, "Inbox")  # Default to Inbox if category not mapped

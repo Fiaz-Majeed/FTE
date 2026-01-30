@@ -1,0 +1,1 @@
+"""Reasoning module for FTE Silver Tier."""

@@ -1,0 +1,56 @@
+{
+  "LOG": true,
+  "LOG_LEVEL": "info",
+  "HOST": "127.0.0.1",
+  "PORT": 3456,
+  "API_TIMEOUT_MS": 600000,
+  "Providers": [
+    {
+      "name": "qwen",
+      "api_base_url": "https://portal.qwen.ai/v1/chat/completions",
+      "api_key": "kbTlbA1HeF3W9fDMV5575wPnekBUmSGJf7maRuNGFMQnYai3oepCXQ82Fod_Dx75SaSDysC6bb76Sve8ptyfsA",
+      "models": ["qwen3-coder-plus", "qwen3-coder-plus", "qwen3-coder-plus"]
+    }
+  ],
+  "Router": {
+    "default": "qwen,qwen3-coder-plus",
+    "background": "qwen,qwen3-coder-plus",
+    "think": "qwen,qwen3-coder-plus",
+    "longContext": "qwen,qwen3-coder-plus",
+    "longContextThreshold": 60000,
+    "webSearch": "qwen,qwen3-coder-plus"
+  },
+  "MCP": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8000,
+    "api_key": null,
+    "ssl": false
+  },
+  "Watchers": {
+    "gmail": {
+      "enabled": true,
+      "poll_interval": 60
+    },
+    "whatsapp": {
+      "enabled": true,
+      "poll_interval": 60
+    },
+    "linkedin": {
+      "enabled": false,
+      "poll_interval": 300
+    },
+    "file_system": {
+      "enabled": true,
+      "poll_interval": 1
+    }
+  },
+  "Scheduling": {
+    "enabled": true,
+    "timezone": "UTC"
+  },
+  "Approval": {
+    "required_for": ["email_send", "linkedin_post", "file_delete"],
+    "admin_email": null
+  }
+}

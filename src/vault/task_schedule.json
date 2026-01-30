@@ -1,0 +1,39 @@
+{
+  "tasks": [
+    {
+      "id": "vault_maintenance_1769507084",
+      "name": "vault_maintenance",
+      "function": "fte.scheduler.task_scheduler.run_scheduled_vault_maintenance",
+      "trigger_type": "cron",
+      "trigger_args": {
+        "minute": "0",
+        "hour": "2",
+        "day": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "args": [],
+      "kwargs": {},
+      "description": "Daily vault maintenance and cleanup",
+      "scheduled_at": "2026-01-27T14:44:44.575649",
+      "status": "active",
+      "persist": true
+    },
+    {
+      "id": "linkedin_check_1769507084",
+      "name": "linkedin_check",
+      "function": "fte.scheduler.task_scheduler.run_scheduled_linkedin_posting",
+      "trigger_type": "interval",
+      "trigger_args": {
+        "hours": 1
+      },
+      "args": [],
+      "kwargs": {},
+      "description": "Hourly check for scheduled LinkedIn posts",
+      "scheduled_at": "2026-01-27T14:44:44.577687",
+      "status": "active",
+      "persist": true
+    }
+  ],
+  "last_updated": "2026-01-27T14:44:44.577700"
+}

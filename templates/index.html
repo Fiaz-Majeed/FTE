@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silver Tier - WhatsApp Message Sender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="tel"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .quick-messages {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: #2980b9;
+        }
+
+        .btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #229954;
+        }
+
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .response.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .response.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .status.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.sending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .credential-status {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .credential-status.ok {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .credential-status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .quick-messages {
+                flex-direction: column;
+            }
+
+            .quick-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WhatsApp Message Sender</h1>
+
+        <div id="credentialStatus" class="credential-status"></div>
+
+        <form id="whatsappForm">
+            <div class="form-group">
+                <label for="toNumber">Recipient Number:</label>
+                <input type="tel" id="toNumber" name="toNumber" placeholder="+923349739727" value="+923349739727" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Quick Messages:</label>
+                <div class="quick-messages">
+                    <button type="button" class="quick-btn" data-message="hi">Hi</button>
+                    <button type="button" class="quick-btn" data-message="how are you">How are you?</button>
+                    <button type="button" class="quick-btn" data-message="Good morning!">Good Morning</button>
+                    <button type="button" class="quick-btn" data-message="Thank you!">Thank You</button>
+                    <button type="button" class="quick-btn" id="clearBtn">Clear</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="sendBtn">Send WhatsApp Message</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Sending message...</p>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="response" class="response"></div>
+    </div>
+
+    <script>
+        // Check credentials on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCredentials();
+
+            // Quick message buttons
+            document.querySelectorAll('.quick-btn:not(#clearBtn)').forEach(button => {
+                button.addEventListener('click', function() {
+                    const message = this.getAttribute('data-message');
+                    document.getElementById('message').value = message;
+                });
+            });
+
+            // Clear button
+            document.getElementById('clearBtn').addEventListener('click', function() {
+                document.getElementById('message').value = '';
+            });
+
+            // Form submission
+            document.getElementById('whatsappForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const toNumber = document.getElementById('toNumber').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!toNumber || !message) {
+                    showStatus('Please fill in both recipient number and message.', 'error');
+                    return;
+                }
+
+                if (!toNumber.startsWith('+')) {
+                    showStatus('Phone number must start with + followed by country code', 'error');
+                    return;
+                }
+
+                sendMessage(toNumber, message);
+            });
+        });
+
+        function checkCredentials() {
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    const credStatus = document.getElementById('credentialStatus');
+                    if (data.credentials_set) {
+                        credStatus.textContent = 'Credentials: OK - Ready to send messages';
+                        credStatus.className = 'credential-status ok';
+                    } else {
+                        credStatus.textContent = 'Warning: Credentials not set - Please configure TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN';
+                        credStatus.className = 'credential-status warning';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking credentials:', error);
+                    const credStatus = document.getElementById('credentialStatus');
+                    credStatus.textContent = 'Error checking credentials';
+                    credStatus.className = 'credential-status warning';
+                });
+        }
+
+        function sendMessage(toNumber, message) {
+            showLoading(true);
+            showStatus('Sending message...', 'sending');
+
+            fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to_number: toNumber,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+
+                if (data.success) {
+                    showStatus(`Message sent successfully! SID: ${data.sid}`, 'ready');
+                    showResponse(`✅ Message sent successfully!<br>• SID: ${data.sid}<br>• Status: ${data.status}<br>• To: ${data.to}<br>• Message: ${data.message}`, 'success');
+
+                    // Clear message after successful send
+                    document.getElementById('message').value = '';
+                } else {
+                    showStatus('Error sending message', 'error');
+                    showResponse(`❌ Error: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                showStatus('Network error occurred', 'error');
+                showResponse(`❌ Network error: ${error.message}`, 'error');
+            });
+        }
+
+        function showLoading(show) {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = show ? 'block' : 'none';
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = show;
+        }
+
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+
+        function showResponse(message, type) {
+            const responseElement = document.getElementById('response');
+            responseElement.innerHTML = message;
+            responseElement.className = `response ${type}`;
+        }
+    </script>
+</body>
+</html>

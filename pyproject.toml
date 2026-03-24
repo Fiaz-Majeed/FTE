@@ -1,7 +1,7 @@
 [project]
 name = "fte"
-version = "0.2.0"
-description = "FTE Silver Tier - Enhanced workflow automation with watchers, LinkedIn posting, Claude reasoning, MCP server, approval workflow, and scheduling"
+version = "1.0.0"
+description = "FTE Gold Tier - Fully autonomous employee with cross-domain integration, Odoo accounting, multi-platform social media, and intelligent task execution"
 readme = "README.md"
 authors = [
     { name = "Fiaz Majeed", email = "fiazcomsats@gmail.com" }
@@ -21,6 +21,10 @@ dependencies = [
     "python-multipart>=0.0.6",
     "pyyaml>=6.0.0",
     "schedule>=1.2.0",
+    "selenium>=4.15.0",
+    "tweepy>=4.14.0",
+    "httpx>=0.24.0",
+    "requests>=2.31.0",
 ]
 
 [project.scripts]

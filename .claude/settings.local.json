@@ -57,7 +57,16 @@
       "Bash(python whatsapp_gui.py)",
       "Bash(python start_web_app.py)",
       "Bash(pip install -r requirements.txt)",
-      "Bash(python -c \"from web_whatsapp_app import app; app.run\\(debug=False, host=''0.0.0.0'', port=5000\\)\")"
+      "Bash(python -c \"from web_whatsapp_app import app; app.run\\(debug=False, host=''0.0.0.0'', port=5000\\)\")",
+      "Read(//mnt/e/PIAIC/Quarter 5/**)",
+      "Bash(fte status:*)",
+      "Bash(python3 verify_silver_tier.py)",
+      "Bash(python:*)",
+      "Bash(pip list:*)",
+      "Bash(find . -type f -name *bronze* -o -name *Bronze*)",
+      "Bash(find src/fte -name *.py -newer src/fte/vault_manager.py)",
+      "Bash(xargs wc:*)",
+      "Bash(git remote:*)"
     ]
   }
 }

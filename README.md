@@ -1,40 +1,114 @@
-# FTE Silver Tier - Foundation Tier Enhanced
+# FTE Gold Tier - Foundation Tier Enhanced
 
-FTE (Foundation Tier Enhanced) is a workflow automation system that extends the Bronze Tier with additional watcher scripts, automated LinkedIn posting, Claude reasoning loop for Plan.md files, MCP server for external actions, human-in-the-loop approval workflow, basic scheduling, and all AI functionality as Agent Skills.
+**Version**: 1.0.0 (Gold Tier - Autonomous Employee)
+**Status**: ✅ Production Ready
+
+FTE (Foundation Tier Enhanced) is a fully autonomous employee system that integrates personal and business workflows across multiple domains. It provides comprehensive automation with social media management, self-hosted accounting, intelligent task execution, and business intelligence.
+
+## 🎯 Gold Tier Features
+
+- **Full Cross-Domain Integration**: Personal + Business workflows unified
+- **Self-Hosted Accounting**: Odoo Community Edition with JSON-RPC integration
+- **Multi-Platform Social Media**: Twitter, Facebook, Instagram automation
+- **Autonomous Task Execution**: Ralph Wiggum loop with self-correction and learning
+- **Weekly Business Audits**: Automated CEO briefings with insights
+- **Error Recovery**: Circuit breakers, retry logic, health checks, fallbacks
+- **Comprehensive Audit Logging**: SQLite-based tracking of all activities
+- **Multiple MCP Servers**: Specialized servers for different domains
+- **20+ Agent Skills**: All AI functionality as modular skills
 
 ## Features
 
-### 1. Additional Watcher Scripts
-- **Gmail Watcher**: Monitors Gmail inbox for new emails with desktop notifications
-- **WhatsApp Watcher**: Monitors WhatsApp messages using Twilio API
-- **LinkedIn Watcher**: Monitors LinkedIn notifications and messages
-- **Enhanced File Watcher**: Advanced file system monitoring with pattern matching
+### 🤖 Autonomous Operations
+- **Ralph Wiggum Loop**: Multi-step task completion with goal decomposition
+- **Self-Correction**: Automatic retry and error recovery
+- **Learning**: Pattern tracking and outcome-based improvement
+- **Task Dependencies**: Intelligent dependency management
 
-### 2. Automated LinkedIn Posting
-- LinkedIn API integration for posting business updates
-- Content generation from vault notes
-- Scheduling mechanism for posts
-- Post analytics tracking
+### 📱 Social Media Integration
+- **Twitter/X**: Post tweets, monitor mentions, engagement summaries
+- **Facebook**: Post updates, get insights, generate reports
+- **Instagram**: Post images with captions, track engagement
+- **LinkedIn**: Automated posting and monitoring (existing)
+- **Content Generation**: AI-powered content from vault notes
 
-### 3. Claude Reasoning Loop
-- Parses Plan.md files to extract goals, tasks, and dependencies
-- Implements iterative reasoning engine with progress tracking
-- Generates adaptive plan adjustments
+### 💰 Accounting System
+- **Odoo 19 Community**: Self-hosted accounting system
+- **JSON-RPC Integration**: Full API access via MCP server
+- **Invoice Management**: Create and track invoices
+- **Payment Recording**: Record and reconcile payments
+- **Financial Reports**: P&L, Balance Sheet, custom reports
 
-### 4. MCP Server
-- FastAPI-based server for external actions
-- Secure endpoint authentication with API keys
-- Action registration system with permission management
+### 📊 Business Intelligence
+- **Weekly Audits**: Automated business and accounting audits
+- **CEO Briefings**: Executive summaries with insights and recommendations
+- **Trend Analysis**: Identify positive trends and areas of concern
+- **Performance Metrics**: Track KPIs across all domains
 
-### 5. Human-in-the-Lock Approval Workflow
-- Decision points in workflows with user notification system
-- Approval tracking and logging
-- Integration with sensitive actions (emails, LinkedIn posts, etc.)
+### 🛡️ Resilience & Error Recovery
+- **Circuit Breakers**: Prevent cascading failures
+- **Retry Logic**: Exponential backoff with jitter
+- **Health Checks**: Monitor service availability
+- **Fallback Strategies**: Graceful degradation
 
-### 6. Basic Scheduling
-- APScheduler integration for task scheduling
-- Persistent scheduling and task queue management
-- Scheduled actions for vault maintenance and reporting
+### 📝 Comprehensive Audit Logging
+- **SQLite Database**: Persistent event storage
+- **10 Event Types**: ACTION, DECISION, API_CALL, APPROVAL, ERROR, SYSTEM, SOCIAL_POST, EMAIL, ACCOUNTING, AUTONOMOUS_TASK
+- **Query Interface**: Filter and analyze events
+- **Statistics**: Generate reports and insights
+
+### 🔌 Multiple MCP Servers
+- **Router** (8000): Central request routing
+- **Accounting** (8001): Odoo integration
+- **Social** (8002): Social media operations
+- **Communication** (8003): Email and messaging
+- **Analytics** (8004): Reporting and analytics
+
+### 👁️ Watchers (6 Active)
+- **Gmail**: Email monitoring with desktop notifications
+- **WhatsApp**: Twilio API integration
+- **LinkedIn**: Professional network monitoring
+- **Twitter**: Mention and engagement tracking
+- **Facebook**: Page monitoring and insights
+- **Instagram**: Business account monitoring
+
+#### Why APScheduler Instead of Cron/Task Scheduler?
+
+The FTE system uses **APScheduler** (Advanced Python Scheduler) instead of native cron (Linux/macOS) or Task Scheduler (Windows) for several important reasons:
+
+1. **Cross-Platform Consistency**: APScheduler works identically on Windows, macOS, and Linux, ensuring the same scheduling behavior across all platforms.
+
+2. **Python Integration**: Being a native Python library, APScheduler can directly call Python functions with full access to the application state, environment variables, and class instances.
+
+3. **In-Process Scheduling**: Unlike cron/Task Scheduler which spawn external processes, APScheduler runs within the Python application, allowing for:
+   - Shared memory and state between scheduled tasks
+   - Lower resource usage (no separate process overhead)
+   - Better error handling and logging
+   - Real-time task management (add/modify/cancel tasks programmatically)
+
+4. **Flexible Trigger Types**: APScheduler supports multiple trigger types:
+   - `IntervalTrigger` - Run every X seconds/minutes/hours
+   - `CronTrigger` - Run at specific times (cron-like syntax)
+   - `DateTrigger` - Run once at a specific datetime
+
+5. **Persistent State**: The scheduler maintains state in JSON format that can be persisted and restored across application restarts, including task definitions and execution history.
+
+6. **Dynamic Management**: Tasks can be added, modified, or cancelled at runtime through the MCP server API, something not easily possible with static cron jobs.
+
+7. **Built-in Concurrency Control**: APScheduler provides built-in support for handling concurrent executions and preventing overlapping tasks using `max_instances` and `coalesce` options.
+
+**Comparison Summary:**
+
+| Feature | APScheduler | Cron | Windows Task Scheduler |
+|---------|--------------|------|----------------------|
+| Cross-Platform | ✅ Yes | ❌ Linux/macOS only | ❌ Windows only |
+| Python Integration | ✅ Native | ❌ External process | ❌ External process |
+| Dynamic Task Management | ✅ Yes | ❌ Requires crontab edit | ❌ Requires GUI |
+| State Persistence | ✅ JSON files | ❌ None | ❌ XML/Custom |
+| Shared Application State | ✅ Yes | ❌ No | ❌ No |
+| Cron Syntax Support | ✅ Yes | ✅ Native | ❌ Complex UI |
+
+For these reasons, APScheduler provides a more robust and flexible solution for the FTE system's scheduling needs while maintaining the requirement for basic scheduling functionality.
 
 ### 7. Agent Skills
 - All AI functionality implemented as standardized skills
@@ -115,25 +189,76 @@ vault/
 └── Rejected_Actions/  # Rejected actions
 ```
 
+## Quick Start
+
+See [QUICK_START.md](QUICK_START.md) for detailed setup instructions.
+
+```bash
+# 1. Install FTE
+pip install -e .
+
+# 2. Set up Odoo (optional)
+python -m fte.setup.odoo_setup odoo-fte
+cd odoo-fte && docker-compose up -d
+
+# 3. Configure credentials in .env file
+
+# 4. Start MCP servers
+python -m fte.mcp.mcp_router &
+python -m fte.mcp.odoo_mcp_server &
+
+# 5. Start watchers
+fte gmail &
+fte whatsapp &
+fte linkedin &
+```
+
 ## API Keys Required
 
+- **Twitter/X**: API key, secret, access token, bearer token
+- **Facebook/Instagram**: Access token, page ID, account ID
 - **Gmail**: Google API credentials (credentials.json, token.pickle)
 - **WhatsApp**: Twilio Account SID and Auth Token
 - **LinkedIn**: LinkedIn username/password (via environment variables)
+- **Odoo**: URL, database, username, password
 - **MCP Server**: Auto-generated API key or custom key
+
+## Documentation
+
+- **[QUICK_START.md](QUICK_START.md)** - Quick start guide
+- **[GOLD_TIER_ARCHITECTURE.md](GOLD_TIER_ARCHITECTURE.md)** - Complete architecture documentation
+- **[GOLD_TIER_COMPLETION_REPORT.md](GOLD_TIER_COMPLETION_REPORT.md)** - Implementation report
+- **[LESSONS_LEARNED.md](LESSONS_LEARNED.md)** - Comprehensive lessons learned
+- **[SILVER_TIER_COMPLETION_REPORT.md](SILVER_TIER_COMPLETION_REPORT.md)** - Silver Tier details
+- **[claude.md](claude.md)** - Project context for Claude Code
 
 ## Development
 
 This project follows a modular architecture with clear separation of concerns:
 
+- `src/fte/audit/` - Audit logging and weekly audits
+- `src/fte/resilience/` - Error recovery and circuit breakers
+- `src/fte/autonomous/` - Ralph Wiggum autonomous loop
 - `src/fte/watchers/` - All watcher implementations
 - `src/fte/social/` - Social media integrations
 - `src/fte/reasoning/` - Claude reasoning engine
-- `src/fte/mcp/` - MCP server and action registry
+- `src/fte/mcp/` - MCP servers and routing
 - `src/fte/approval/` - Approval workflow system
 - `src/fte/scheduler/` - Task scheduling
 - `src/fte/skills/` - Agent skills
+- `src/fte/setup/` - Setup utilities
 - `.claude/skills/` - Claude skill definitions
+
+## Project Timeline
+
+- **Bronze Tier** (v0.1.0) - January 26, 2026
+  - Obsidian vault, file watcher, Gmail watcher, basic skills
+
+- **Silver Tier** (v0.2.0) - February 21, 2026
+  - Multiple watchers, LinkedIn automation, MCP server, approval workflows
+
+- **Gold Tier** (v1.0.0) - March 24, 2026
+  - Full autonomous employee, Odoo accounting, multi-platform social media, Ralph Wiggum loop
 
 ## License
 

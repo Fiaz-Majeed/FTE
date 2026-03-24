@@ -244,21 +244,40 @@ def create_default_action_registry(vault_path: str | Path | None = None) -> Acti
 
     async def send_email(to: str, subject: str, body: str, vault_path: str | Path | None = None):
         """Default action to send an email."""
-        # This would integrate with the existing Gmail functionality
-        from ..gmail_watcher import GmailWatcher
+        # Use the Gmail sender to actually send the email
+        from ..social.gmail_sender import GmailSender
 
-        # In a real implementation, this would send an actual email
-        # For now, just log the intent
-        result = {
-            "sent": False,
-            "to": to,
-            "subject": subject,
-            "body_preview": body[:100] + "..." if len(body) > 100 else body,
-            "message": "Email action received - would send in real implementation"
-        }
+        try:
+            sender = GmailSender()
+            result = sender.send_email(to=to, subject=subject, body=body)
 
-        # In a real implementation, you'd use the Gmail API to send the email
-        return result
+            if result.get("success"):
+                return {
+                    "sent": True,
+                    "to": to,
+                    "subject": subject,
+                    "body_preview": body[:100] + "..." if len(body) > 100 else body,
+                    "message_id": result.get("message_id"),
+                    "message": "Email sent successfully via Gmail API"
+                }
+            else:
+                return {
+                    "sent": False,
+                    "to": to,
+                    "subject": subject,
+                    "body_preview": body[:100] + "..." if len(body) > 100 else body,
+                    "error": result.get("error"),
+                    "message": "Failed to send email"
+                }
+        except Exception as e:
+            return {
+                "sent": False,
+                "to": to,
+                "subject": subject,
+                "body_preview": body[:100] + "..." if len(body) > 100 else body,
+                "error": str(e),
+                "message": "Failed to send email due to exception"
+            }
 
     async def create_note(title: str, content: str, folder: str = "Inbox", vault_path: str | Path | None = None):
         """Default action to create a note in the vault."""

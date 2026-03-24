@@ -263,17 +263,103 @@ class LinkedInWatcher:
             List of message dictionaries
         """
         try:
-            # Get recent messages/conversations
-            # Note: The actual LinkedIn API may have different methods
-            # This is a placeholder implementation
+            # Get recent messages/conversations from linkedin-api
+            if not self._linkedin_client:
+                return []
+
+            # Get conversations (messages) using the linkedin-api library
+            conversations = self._linkedin_client.get_conversations()
+
             messages = []
 
-            # In a real implementation, this would fetch actual messages
-            # For now, returning empty list as placeholder
+            for conv in conversations:
+                try:
+                    # Parse conversation data
+                    conv_urn = conv.get('*conversationUrn', '')
+                    participants = conv.get('participants', [])
+
+                    # Get sender information
+                    sender_name = "Unknown"
+                    sender_urn = None
+                    for participant in participants:
+                        if '*memberUrn' in participant and '*eTag' not in participant.get('*memberUrn', ''):
+                            # This is likely the other party
+                            sender_urn = participant.get('*memberUrn', '')
+                            # Try to get profile info
+                            try:
+                                profile_urn = sender_urn.replace('urn:li:fs_profile:', '')
+                                profile = self._linkedin_client.get_profile(profile_urn)
+                                sender_name = profile.get('firstName', '') + ' ' + profile.get('lastName', '')
+                            except Exception:
+                                sender_name = "LinkedIn Member"
+
+                    # Get last message from conversation
+                    last_activity = conv.get('lastActivityAt', {})
+                    timestamp = last_activity.get('*timestamp', datetime.now().isoformat())
+
+                    # Get message content (this might require additional API call)
+                    # For now, use basic conversation info
+                    message = {
+                        'id': conv_urn,
+                        'type': 'message',
+                        'sender': sender_name,
+                        'sender_urn': sender_urn,
+                        'recipient': 'Me',
+                        'timestamp': timestamp,
+                        'title': 'LinkedIn Message',
+                        'body': f"New message from {sender_name} on LinkedIn.",
+                        'conversation_urn': conv_urn,
+                        'raw_data': json.dumps(conv, indent=2)
+                    }
+
+                    # Check if this is a business opportunity
+                    if self._is_business_message(conv):
+                        message['is_business_opportunity'] = True
+                        message['opportunity_score'] = self._calculate_message_opportunity_score(conv)
+
+                    messages.append(message)
+
+                except Exception as e:
+                    print(f"Error parsing conversation: {e}")
+                    continue
+
             return messages
+
         except Exception as e:
             print(f"Error fetching LinkedIn messages: {e}")
-            return []
+            # Try alternative method if get_conversations fails
+            try:
+                # Fallback: Get network updates which may include messages
+                network_updates = self._linkedin_client.get_network_updates()
+                messages = []
+                for update in network_updates.get('elements', []):
+                    if update.get('updateType') == 'MESG' or 'message' in update.get('updateMetadata', {}).get('category', '').lower():
+                        message = self._parse_network_update(update)
+                        if message:
+                            message['type'] = 'message'
+                            messages.append(message)
+                return messages
+            except Exception as fallback_error:
+                print(f"Fallback method also failed: {fallback_error}")
+                return []
+
+    def _is_business_message(self, conversation: Dict[str, Any]) -> bool:
+        """Determine if a conversation represents a business opportunity."""
+        # Check conversation for business-related indicators
+        # This is limited as we don't have full message content without additional API calls
+        return True  # Treat all LinkedIn messages as potential business opportunities
+
+    def _calculate_message_opportunity_score(self, conversation: Dict[str, Any]) -> float:
+        """Calculate business opportunity score for a message."""
+        # Base score for being a LinkedIn message
+        score = 0.5
+
+        # Add score for recent activity
+        last_activity = conversation.get('lastActivityAt', {})
+        if last_activity.get('*timestamp'):
+            score += 0.2
+
+        return min(score, 1.0)
 
     def _normalize_activity_data(self, raw_data: dict, activity_type: str) -> Dict[str, Any]:
         """Normalize different types of LinkedIn activity data.

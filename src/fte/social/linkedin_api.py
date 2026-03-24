@@ -46,8 +46,11 @@ class LinkedInAPI:
 
         Returns:
             True if authentication successful
+
+        Note: LinkedIn has deprecated username/password authentication.
+        Consider using browser automation (linkedin_browser_automation.py) instead.
         """
-        if not self.username or not self.auth_token:
+        if not self.username or not self.password:
             # Try to load from environment or config
             import os
             self.username = self.username or os.getenv("LINKEDIN_USERNAME")
@@ -64,7 +67,10 @@ class LinkedInAPI:
             self._authenticated = True
             return True
         except Exception as e:
-            print(f"LinkedIn authentication failed: {e}")
+            print(f"LinkedIn API authentication failed: {e}")
+            print("Note: LinkedIn has deprecated username/password API authentication.")
+            print("Consider using browser automation instead:")
+            print("  from fte.social.linkedin_browser_automation import LinkedInBrowserAutomation")
             return False
 
     def post_update(
